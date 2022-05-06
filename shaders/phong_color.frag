@@ -16,5 +16,14 @@ uniform float material_shininess; // n
 out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(material_color, 1.0);
+    vec3 N = normalize(frag_normal);
+    vec3 L = normalize(light_position - frag_pos);
+    vec3 V = normalize(camera_position - frag_pos);
+    vec3 R = normalize(reflect(-L,N));
+
+    vec3 specular = material_specular * pow(max(dot(V,R), 0.0), material_shininess);
+    vec3 diffuse = material_color * max(dot(L, N), 0.0);
+
+    FragColor = vec4(material_color + specular + diffuse, 1.0);
+    
 }
