@@ -20,6 +20,10 @@ function init() {
                             specular: vec3.fromValues(0.0, 0.0, 0.0),  // red, green, blue
                             shininess: 1
                         },
+                        texture: {
+                            "url": "images/World_Map.jpg",
+                            "scale": [1, 1]
+                        },
                         center: vec3.fromValues(0.0, 0.0, -8.0),  // x, y, z
                         size: vec3.fromValues(8.0, 1.0, 8.0),  // width, 1.0, depth
                         rotate_x: 0,

@@ -20,10 +20,14 @@ void main() {
     vec3 L = normalize(light_position - frag_pos);
     vec3 V = normalize(camera_position - frag_pos);
     vec3 R = normalize(reflect(-L,N));
-
-    vec3 specular = material_specular * pow(max(dot(V,R), 0.0), material_shininess);
-    vec3 diffuse = material_color * max(dot(L, N), 0.0);
-
-    FragColor = vec4(material_color + specular + diffuse, 1.0);
+    float nDt = dot(N, L);
+    vec3 shadeMap = light_ambient;
+    if(nDt > 0.0) {
     
+        vec3 specular = material_specular * pow(max(dot(R,V), 0.0), 0.5f);
+        vec3 diffuse = material_color * nDt;
+        shadeMap += specular + light_color + diffuse;
+
+    }
+    FragColor = vec4(material_color + shadeMap, 1.0); 
 }
