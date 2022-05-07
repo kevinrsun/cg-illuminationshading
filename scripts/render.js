@@ -14,15 +14,15 @@ function init() {
                 models: [
                     {
                         type: 'plane',
-                        shader: 'color',
+                        shader: 'texture',
                         material: {
                             color: vec3.fromValues(0.7, 0.1, 0.1),  // red, green, blue
                             specular: vec3.fromValues(0.0, 0.0, 0.0),  // red, green, blue
                             shininess: 1
                         },
                         texture: {
-                            "url": "images/World_Map.jpg",
-                            "scale": [1, 1]
+                            "url": "images/paulrudd.jpg",
+                            "scale": [10, 10]
                         },
                         center: vec3.fromValues(0.0, 0.0, -8.0),  // x, y, z
                         size: vec3.fromValues(8.0, 1.0, 8.0),  // width, 1.0, depth
@@ -30,13 +30,19 @@ function init() {
                         rotate_y: 0,
                         rotate_z: 0
                     },
+                   
                     {
                         type: 'sphere',
-                        shader: 'color',
+                        shader: 'texture',
                         material: {
                             color: vec3.fromValues(0.1, 0.4, 0.9),  // red, green, blue
                             specular: vec3.fromValues(1.0, 1.0, 1.0),  // red, green, blue
                             shininess: 32
+                        },
+                    
+                        texture: {
+                            "url": "images/World_Map.jpg",
+                            "scale": [1, 1]
                         },
                         center: vec3.fromValues(0.0, 1.0, -6.0), // x, y, z
                         size: vec3.fromValues(2.0, 2.0, 2.0),  // width, height, depth

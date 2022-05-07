@@ -18,7 +18,7 @@ uniform sampler2D image;          // use in conjunction with Ka and Kd
 out vec4 FragColor;
 
 void main() {
-     vec3 N = normalize(frag_normal);
+    vec3 N = normalize(frag_normal);
     vec3 L = normalize(light_position - frag_pos);
     vec3 V = normalize(camera_position - frag_pos);
     vec3 R = normalize(reflect(-L,N));
@@ -31,6 +31,5 @@ void main() {
         shadeMap += specular + light_color + diffuse;
 
     }
-    vec4 test = texture(image, frag_texcoord);
-    FragColor = test * vec4(material_color + shadeMap, 1.0); 
+    FragColor = vec4(shadeMap, 1.0) + texture(image, frag_texcoord);
 }

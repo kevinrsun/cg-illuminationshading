@@ -2,6 +2,7 @@ const {mat4, vec2, vec3, vec4} = glMatrix;
 
 class GlApp {
     constructor(canvas_id, width, height, scene) {
+
         // initialize <canvas> with a WebGL 2 context
         this.canvas = document.getElementById(canvas_id);
         this.canvas.width = width;
@@ -26,6 +27,8 @@ class GlApp {
         this.projection_matrix = mat4.create();      // projection matrix (on CPU)
         this.view_matrix = mat4.create();            // view matrix (on CPU)
         this.model_matrix = mat4.create();           // model matrix (on CPU)
+
+        this.texture_scale = vec2.create();
 
         this.vertex_array = {                        // model Vertex Array Objects (contains all attributes
             plane: null,                             // of the model - vertices, normals, faces, ...)
@@ -117,6 +120,17 @@ class GlApp {
         let cam_target = this.scene.camera.target;
         let cam_up = this.scene.camera.up;
         mat4.lookAt(this.view_matrix, cam_pos, cam_target, cam_up);
+        //Bind textures to buffer.
+        var bufferIdx = 0;
+        for (var ii = 0; ii < this.scene.models.length; ++ii) {
+            if(this.scene.models[ii].shader == "texture") {
+                this.gl.activeTexture(this.gl.TEXTURE0 + bufferIdx);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[ii].texture.id);
+                bufferIdx++;
+
+
+            }
+          }
 
         // render scene
         this.render();
@@ -125,11 +139,9 @@ class GlApp {
     initializeTexture(image_url) {
         // create a texture, and upload a temporary 1px white RGBA array [255,255,255,255]
         let texture = this.gl.createTexture();
-
-        //
-        // TODO: set texture parameters and upload a temporary 1px white RGBA array [255,255,255,255]
-        // 
-
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+        //fill with 1x1 white
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array([255,255,255,255]));
         // download the actual image
         let image = new Image();
         image.crossOrigin = 'anonymous';
@@ -143,9 +155,9 @@ class GlApp {
     }
 
     updateTexture(texture, image_element) {
-        //
-        // TODO: update image for specified texture
-        //
+       this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+       this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image_element);
+       this.gl.generateMipmap(this.gl.TEXTURE_2D);
     }
 
     render() {
@@ -155,14 +167,26 @@ class GlApp {
         // draw all models
         for (let i = 0; i < this.scene.models.length; i ++) {
             if (this.vertex_array[this.scene.models[i].type] == null) continue;
-            console.log(this.scene.models[i]);
-
-            //
-            // TODO: properly select shader here
-            //
-            let selected_shader = this.algorithm + "_" + ((this.scene.models[i].texture != null) ? "texture" : "color");
+            let selected_shader;
+            if(this.algorithm != "emissive") {
+                selected_shader = this.algorithm + "_" + this.scene.models[i].shader;
+            } else {
+                selected_shader = this.algorithm;
+            }
+            
             this.gl.useProgram(this.shader[selected_shader].program);
-
+            if(this.scene.models[i].shader == "texture") {
+                this.gl.uniform1i(this.gl.getUniformLocation(
+                    this.shader[selected_shader].program,
+                    "image"
+                ), i);
+                let v = vec2.fromValues(this.scene.models[i].texture.scale[0], this.scene.models[i].texture.scale[1]);
+                this.gl.uniform2fv(this.gl.getUniformLocation(
+                    this.shader[selected_shader].program,
+                    "texture_scale"
+                ), v);    
+            }
+         
             // transform model to proper position, size, and orientation
             glMatrix.mat4.identity(this.model_matrix);
             glMatrix.mat4.translate(this.model_matrix, this.model_matrix, this.scene.models[i].center);
@@ -175,10 +199,7 @@ class GlApp {
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.projection_matrix, false, this.projection_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.view_matrix, false, this.view_matrix);
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.model_matrix, false, this.model_matrix);
-            
-            //
-            // TODO: bind proper texture and set uniform (if shader is a textured one)
-            //
+           
 
             this.gl.bindVertexArray(this.vertex_array[this.scene.models[i].type]);
             this.gl.drawElements(this.gl.TRIANGLES, this.vertex_array[this.scene.models[i].type].face_index_count, this.gl.UNSIGNED_SHORT, 0);
@@ -193,6 +214,7 @@ class GlApp {
             glMatrix.mat4.translate(this.model_matrix, this.model_matrix, this.scene.light.point_lights[i].position);
             glMatrix.mat4.scale(this.model_matrix, this.model_matrix, glMatrix.vec3.fromValues(0.1, 0.1, 0.1));
 
+            
 
             this.gl.uniform3fv(this.shader['emissive'].uniforms.material_color, this.scene.light.point_lights[i].color);
             this.gl.uniformMatrix4fv(this.shader['emissive'].uniforms.projection_matrix, false, this.projection_matrix);

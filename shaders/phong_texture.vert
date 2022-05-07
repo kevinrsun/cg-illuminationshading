@@ -17,5 +17,7 @@ out vec2 frag_texcoord;
 
 void main() {
     gl_Position = projection_matrix * view_matrix * model_matrix * vec4(vertex_position, 1.0);
-    frag_texcoord = vertex_texcoord * texture_scale;
+    //vec2 scaled = vec2(vertex_texcoord.x / texture_scale.x, vertex_texcoord.y / texture_scale.y);
+    
+    frag_texcoord =  vertex_texcoord * texture_scale;
 }
