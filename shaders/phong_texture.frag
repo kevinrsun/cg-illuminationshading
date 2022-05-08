@@ -25,11 +25,9 @@ void main() {
     float nDt = dot(N, L);
     vec3 shadeMap = light_ambient;
     if(nDt > 0.0) {
-    
         vec3 specular = material_specular * pow(max(dot(R,V), 0.0), 0.5f);
         vec3 diffuse = material_color * nDt;
         shadeMap += specular + light_color + diffuse;
-
     }
     FragColor = vec4(shadeMap, 1.0) + texture(image, frag_texcoord);
 }
