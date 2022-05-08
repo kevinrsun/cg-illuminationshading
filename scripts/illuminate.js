@@ -38,7 +38,7 @@ class GlApp {
         };
 
         this.scene = scene;                          // current scene to draw (list of models and lights)
-        this.algorithm = 'emissive';                  // current shading algorithm to use for rendering
+        this.algorithm = 'gouraud';                  // current shading algorithm to use for rendering
 
 
         // download and compile shaders into GPU program
@@ -122,13 +122,13 @@ class GlApp {
         mat4.lookAt(this.view_matrix, cam_pos, cam_target, cam_up);
         //Bind textures to buffer.
         var bufferIdx = 0;
-        for (var ii = 0; ii < this.scene.models.length; ++ii) {
-            if(this.scene.models[ii].shader == "texture") {
+        for (let i = 0; i < this.scene.models.length; i++) {
+            if(this.scene.models[i].shader == "texture") {
                 this.gl.activeTexture(this.gl.TEXTURE0 + bufferIdx);
-                this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[ii].texture.id);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
                 bufferIdx++;
             }
-          }
+        }
 
         // render scene
         this.render();
