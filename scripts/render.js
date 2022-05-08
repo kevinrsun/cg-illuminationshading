@@ -16,7 +16,7 @@ function init() {
                         type: 'plane',
                         shader: 'texture',
                         material: {
-                            color: vec3.fromValues(0.7, 0.1, 0.1),  // red, green, blue
+                            color: vec3.fromValues(0.0, 0.0, 0.0),  // red, green, blue
                             specular: vec3.fromValues(0.0, 0.0, 0.0),  // red, green, blue
                             shininess: 1
                         },

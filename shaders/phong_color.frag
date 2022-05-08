@@ -19,17 +19,14 @@ void main() {
     vec3 N = normalize(frag_normal);
     vec3 L = normalize(light_position - frag_pos);
     vec3 V = normalize(camera_position - frag_pos);
-    vec3 R = normalize(reflect(-L,N));
+    vec3 R = normalize(2.0 * N * dot(N, L) - L);
     float nDt = dot(N, L);
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0.0);
     if(nDt > 0.0) {
         diffuse = light_color * nDt;
     }
-
-    vec3 rVector = normalize(2.0 * N * dot(N, L) - L);
-	vec3 viewVector = normalize(-frag_pos);
-	float RdotV = dot(rVector, viewVector);
+	float RdotV = dot(R, V);
 
     if(RdotV > 0.0) {
         specular = material_specular * pow(RdotV, material_shininess);
