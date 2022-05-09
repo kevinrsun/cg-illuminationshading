@@ -38,8 +38,8 @@ void main() {
 		vec3 light_direction = normalize(lights[i].light_position - vertex_position_alt);
 		diffuse = diffuse + clamp(lights[i].light_color * dot(vertex_normal_alt, light_direction), 0.0, 1.0);
 
-		vec3 view_direction = normalize(camera_position - position); 
-		vec3 reflected_direction = normalize(reflect(-light_direction, newVertexNormal));
+		vec3 view_direction = normalize(camera_position - vertex_position_alt); 
+		vec3 reflected_direction = normalize(reflect(-light_direction, vertex_position_alt));
 		specular = specular + lights[i].light_color * pow(clamp(dot(reflected_direction, view_direction), 0.0, 1.0), material_shininess);
 	}
 	
