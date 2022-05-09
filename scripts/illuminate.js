@@ -120,21 +120,13 @@ class GlApp {
         let cam_target = this.scene.camera.target;
         let cam_up = this.scene.camera.up;
         mat4.lookAt(this.view_matrix, cam_pos, cam_target, cam_up);
-        //Bind textures to buffer.
-        var bufferIdx = 0;
-        for (let i = 0; i < this.scene.models.length; i++) {
-            if(this.scene.models[i].shader == "texture") {
-                this.gl.activeTexture(this.gl.TEXTURE0 + bufferIdx);
-                this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
-                bufferIdx++;
-            }
-        }
-
+  
         // render scene
         this.render();
     }
 
     initializeTexture(image_url) {
+        console.log(image_url);
         // create a texture, and upload a temporary 1px white RGBA array [255,255,255,255]
         let texture = this.gl.createTexture();
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
@@ -161,7 +153,9 @@ class GlApp {
     render() {
         // delete previous frame (reset both framebuffer and z-buffer)
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        
+            
+     
+    
         // draw all models
         for (let i = 0; i < this.scene.models.length; i ++) {
             if (this.vertex_array[this.scene.models[i].type] == null) continue;
@@ -173,6 +167,7 @@ class GlApp {
             }
             
             this.gl.useProgram(this.shader[selected_shader].program);
+            
             if(this.scene.models[i].shader == "texture") {
                 this.gl.uniform1i(this.gl.getUniformLocation(
                     this.shader[selected_shader].program,
@@ -200,9 +195,7 @@ class GlApp {
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.model_matrix, false, this.model_matrix);
 
             this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
-            // this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_position, this.scene.light.point_lights[0].position);
-            // this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, this.scene.light.point_lights[0].color);
-            
+
             for(let f = 0; f < this.scene.light.point_lights.length; f++) {
                 let lPoint = this.scene.light.point_lights[f];
                 this.gl.uniform3fv(this.gl.getUniformLocation(this.shader[selected_shader].program, "lights["+f+"].light_position"), vec3.fromValues(
@@ -245,9 +238,19 @@ class GlApp {
     }
 
     updateScene(scene) {
+        
+
         // update scene
         this.scene = scene;
-        
+           //Bind textures to buffer.
+        var bufferIdx = 0;
+        for (let i = 0; i < this.scene.models.length; i++) {
+            if(this.scene.models[i].shader == "texture") {
+                this.gl.activeTexture(this.gl.TEXTURE0 + bufferIdx);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, this.scene.models[i].texture.id);
+                bufferIdx++;
+            }
+        }
         // set the background color
         this.gl.clearColor(this.scene.background[0], this.scene.background[1], this.scene.background[2], 1.0);
         
