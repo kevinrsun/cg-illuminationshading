@@ -20,5 +20,5 @@ void main() {
     vec4 specularText = vec4(specular * material_specular, 1.0);
     vec4 allText = clamp(ambientText + diffuseText + specularText, 0.0, 1.0);
 
-    FragColor = allText * texture(image, frag_texcoord);
+    FragColor = 0.5 * (ambientText + diffuseText + specularText) + 0.5 * texture(image, frag_texcoord);
 }
