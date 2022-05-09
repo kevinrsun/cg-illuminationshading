@@ -200,8 +200,6 @@ class GlApp {
             this.gl.uniformMatrix4fv(this.shader[selected_shader].uniforms.model_matrix, false, this.model_matrix);
 
             this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_ambient, this.scene.light.ambient);
-            // this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_position, this.scene.light.point_lights[0].position);
-            // this.gl.uniform3fv(this.shader[selected_shader].uniforms.light_color, this.scene.light.point_lights[0].color);
             
             for(let f = 0; f < this.scene.light.point_lights.length; f++) {
                 let lPoint = this.scene.light.point_lights[f];
@@ -226,7 +224,7 @@ class GlApp {
         }
 
         // draw all light sources
-        for (let i = 0; i < this.scene.light.point_lights.length; i ++) {
+        for (let i = 0; i < this.scene.light.point_lights.length; i++) {
             this.gl.useProgram(this.shader['emissive'].program);
 
             glMatrix.mat4.identity(this.model_matrix);
