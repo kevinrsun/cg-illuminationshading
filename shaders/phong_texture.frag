@@ -6,8 +6,6 @@ in vec3 frag_pos;
 in vec3 frag_normal;
 in vec2 frag_texcoord;
 
-
-
 uniform vec3 light_ambient;
 
 struct LightPoint {
@@ -22,8 +20,6 @@ uniform vec3 material_specular;   // Ks
 uniform float material_shininess; // n
 uniform sampler2D image;          // use in conjunction with Ka and Kd
 
-
-
 out vec4 FragColor;
 
 void main() {
@@ -36,13 +32,10 @@ void main() {
     FragColor = vec4(0.0);
     for(int pt = 0; pt < 3; pt++) {
         LightPoint point = lights[pt];
-        if(point.light_color == vec3(0.0)) {return;}
         vec3 L = normalize(point.light_position - frag_pos);
         vec3 R = normalize(2.0 * N * dot(N, L) - L);
         float nDt = dot(N, L);
        
-
-
         if(nDt > 0.0) {
             diffuse += (material_color + point.light_color) * nDt;
         }

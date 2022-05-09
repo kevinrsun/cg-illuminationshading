@@ -183,7 +183,6 @@ function loadNewScene() {
                                       new_scene.light.point_lights[i].color[2]);
             scene.light.point_lights.push(l);
         }
-
         glapp.updateScene(scene);
     };
     reader.readAsText(scene_file.files[0], 'UTF-8');
